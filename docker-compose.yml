@@ -2,13 +2,20 @@
 #
 # Each service builds a platform-specific image that configures the official
 # HashiCorp package repository and, when run, prints the list of available
-# HashiCorp packages for that platform.
+# HashiCorp packages for that platform and saves it to ./output/<os>.txt.
 #
 # Run all platforms:
 #   docker compose up --build
 #
 # Run a single platform (e.g. RHEL 9):
 #   docker compose run --rm rhel9
+#
+# Output files are written to ./output/ on the host:
+#   output/hashicorp-packages-rhel8.txt
+#   output/hashicorp-packages-rhel9.txt
+#   output/hashicorp-packages-rhel10.txt
+#   output/hashicorp-packages-ubuntu-noble.txt
+#   output/hashicorp-packages-ubuntu-jammy.txt
 #
 # Platforms covered:
 #   rhel8        - RHEL 8 compatible (AlmaLinux 8)
@@ -22,23 +29,33 @@ services:
     build:
       context: docker/rhel8
     platform: linux/amd64
+    volumes:
+      - ./output:/output
 
   rhel9:
     build:
       context: docker/rhel9
     platform: linux/amd64
+    volumes:
+      - ./output:/output
 
   rhel10:
     build:
       context: docker/rhel10
     platform: linux/amd64
+    volumes:
+      - ./output:/output
 
   ubuntu-noble:
     build:
       context: docker/ubuntu-noble
     platform: linux/amd64
+    volumes:
+      - ./output:/output
 
   ubuntu-jammy:
     build:
       context: docker/ubuntu-jammy
     platform: linux/amd64
+    volumes:
+      - ./output:/output

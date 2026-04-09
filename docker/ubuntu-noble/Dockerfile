@@ -13,4 +13,12 @@ RUN apt-get update && \
         tee /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update
 
-CMD ["bash", "-c", "grep -h '^Package: ' /var/lib/apt/lists/*hashicorp* 2>/dev/null | sort -u | sed 's/Package: //'"]
+RUN mkdir -p /output
+
+# Parses the HashiCorp APT Packages index to emit the latest version of each
+# package (name<TAB>version) and writes to /output/hashicorp-packages-ubuntu-noble.txt.
+CMD ["bash", "-c", "awk '/^Package:/{pkg=$2} /^Version:/{print pkg\"\\t\"$2}' \
+  /var/lib/apt/lists/*hashicorp*Packages 2>/dev/null \
+  | sort -t$'\\t' -k1,1 -k2,2Vr \
+  | awk -F'\\t' '!seen[$1]++' \
+  | tee /output/hashicorp-packages-ubuntu-noble.txt"]
