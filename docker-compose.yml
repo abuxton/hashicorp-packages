@@ -1,0 +1,44 @@
+# Docker Compose file for HashiCorp package repository exploration.
+#
+# Each service builds a platform-specific image that configures the official
+# HashiCorp package repository and, when run, prints the list of available
+# HashiCorp packages for that platform.
+#
+# Run all platforms:
+#   docker compose up --build
+#
+# Run a single platform (e.g. RHEL 9):
+#   docker compose run --rm rhel9
+#
+# Platforms covered:
+#   rhel8        - RHEL 8 compatible (AlmaLinux 8)
+#   rhel9        - RHEL 9 compatible (AlmaLinux 9)
+#   rhel10       - RHEL 10 compatible (AlmaLinux 10)
+#   ubuntu-noble - Ubuntu 24.04 LTS (latest)
+#   ubuntu-jammy - Ubuntu 22.04 LTS (previous)
+
+services:
+  rhel8:
+    build:
+      context: docker/rhel8
+    platform: linux/amd64
+
+  rhel9:
+    build:
+      context: docker/rhel9
+    platform: linux/amd64
+
+  rhel10:
+    build:
+      context: docker/rhel10
+    platform: linux/amd64
+
+  ubuntu-noble:
+    build:
+      context: docker/ubuntu-noble
+    platform: linux/amd64
+
+  ubuntu-jammy:
+    build:
+      context: docker/ubuntu-jammy
+    platform: linux/amd64
