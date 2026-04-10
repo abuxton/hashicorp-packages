@@ -1,0 +1,18 @@
+# HashiCorp packages on RHEL 8 compatible (AlmaLinux 8)
+# Configures the official HashiCorp RPM repository and lists available packages on run.
+FROM almalinux:8
+
+RUN yum install -y yum-utils && \
+    yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo && \
+    yum makecache
+
+RUN mkdir -p /output
+
+# Lists the latest available version of each HashiCorp package (name<TAB>version)
+# and writes the result to /output/hashicorp-packages-rhel8.txt as well as stdout.
+CMD ["bash", "-c", "yum --disablerepo=* --enablerepo=hashicorp list available 2>/dev/null \
+  | grep -v '^Available\\|^Last' \
+  | awk 'NF>=2 {print $1\"\\t\"$2}' \
+  | sort -t$'\\t' -k1,1 -k2,2Vr \
+  | awk -F'\\t' '!seen[$1]++' \
+  | tee /output/hashicorp-packages-rhel8.txt"]
