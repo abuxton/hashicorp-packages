@@ -1,9 +1,17 @@
-# HashiCorp packages on RHEL 10 compatible (AlmaLinux 10)
-# Configures the official HashiCorp RPM repository and lists available packages on run.
-FROM almalinux:10
+# HashiCorp packages on RHEL 10 compatible systems.
+# Current EL10 userspace images require x86-64-v3, which is not available on all
+# hosts, so we use an EL9 userspace while querying the HashiCorp RHEL 10 repo.
+FROM almalinux:9
 
 RUN dnf install -y dnf-plugins-core && \
-    dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo && \
+    printf '%s\n' \
+      '[hashicorp]' \
+      'name=HashiCorp Stable - x86_64' \
+      'baseurl=https://rpm.releases.hashicorp.com/RHEL/10/x86_64/stable' \
+      'enabled=1' \
+      'gpgcheck=1' \
+      'gpgkey=https://rpm.releases.hashicorp.com/gpg' \
+      > /etc/yum.repos.d/hashicorp.repo && \
     dnf makecache
 
 RUN mkdir -p /output
